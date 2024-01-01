@@ -9,6 +9,30 @@ void main() {
   );
 }
 
+//------------ EXAMPLE 2 ------------
+
+extension OptionalInfixAddition<T extends num> on T? {
+  T? operator +(T? other) {
+    final shadow = this;
+    if (shadow != null) {
+      return shadow + (other ?? 0) as T;
+    } else {
+      return null;
+    }
+  }
+}
+
+class Counter extends StateNotifier<int?> {
+  Counter() : super(0);
+  void increment() => state = state == 0 ? 1 : state + 1;
+  int? get value => state;
+}
+
+final counterProvider = StateNotifierProvider<Counter, int?>(
+  (ref) => Counter(),
+);
+
+//------------ EXAMPLE 1 ------------
 //package: hooks_riverpod
 
 class App extends StatelessWidget {
@@ -38,17 +62,46 @@ class HomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final date = ref.watch(currentDate);
+    // //as the value changes, the whole scaffold builds again -- computational power waste
+    // final counter = ref.watch(counterProvider);
     return Scaffold(
       appBar: AppBar(
-        title: Center(child: const Text('Hooks Riverpod')),
-      ),
-      body: Center(
-          child: Text(
-        date.toString(),
-        style: TextStyle(
-          color: Colors.white,
+        title: Consumer(
+          builder: (context, ref, child) {
+            //only title will be recalc
+            final count = ref.watch(counterProvider);
+            final text = count == 0 ? 'Press the button' : count.toString();
+            return Text(text);
+          },
         ),
-      )),
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          TextButton(
+            // onPressed: ref.read(counterProvider.notifier).increment,
+            onPressed: () {
+              //gets current snapshot of the data
+              ref.read(counterProvider.notifier).increment();
+            },
+            child: const Text(
+              'Increment Counter',
+            ),
+          ),
+          SizedBox(height: 20),
+          Center(
+            child: Text('Date And Time:- '),
+          ),
+          SizedBox(height: 10),
+          Center(
+              child: Text(
+            date.toString(),
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          )),
+        ],
+      ),
     );
   }
 }
