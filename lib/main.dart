@@ -9,6 +9,8 @@ void main() {
   );
 }
 
+//------------ EXAMPLE 2 ------------
+
 extension OptionalInfixAddition<T extends num> on T? {
   T? operator +(T? other) {
     final shadow = this;
@@ -30,12 +32,18 @@ final counterProvider = StateNotifierProvider<Counter, int?>(
   (ref) => Counter(),
 );
 
+//------------ EXAMPLE 1 ------------
+//package: hooks_riverpod
+
 class App extends StatelessWidget {
   const App({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      // theme: ThemeData(
+      //   primaryColor: Colors.blue,
+      // ),
       darkTheme: ThemeData.dark(),
       themeMode: ThemeMode.dark,
       debugShowCheckedModeBanner: false,
@@ -44,11 +52,16 @@ class App extends StatelessWidget {
   }
 }
 
+final currentDate = Provider(
+  (ref) => DateTime.now(),
+);
+
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final date = ref.watch(currentDate);
     // //as the value changes, the whole scaffold builds again -- computational power waste
     // final counter = ref.watch(counterProvider);
     return Scaffold(
@@ -57,7 +70,7 @@ class HomePage extends ConsumerWidget {
           builder: (context, ref, child) {
             //only title will be recalc
             final count = ref.watch(counterProvider);
-            final text = count == null? 'Press the button' : count.toString();
+            final text = count == 0 ? 'Press the button' : count.toString();
             return Text(text);
           },
         ),
@@ -74,9 +87,34 @@ class HomePage extends ConsumerWidget {
             child: const Text(
               'Increment Counter',
             ),
-          )
+          ),
+          SizedBox(height: 20),
+          Center(
+            child: Text('Date And Time:- '),
+          ),
+          SizedBox(height: 10),
+          Center(
+              child: Text(
+            date.toString(),
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          )),
         ],
       ),
     );
   }
 }
+
+//**error** Bad state: provider to be available to ur app.. under runapp
+
+// class HomePage extends StatelessWidget {
+//   const HomePage({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(title: const Text('Home'),),
+//     );
+//   }
+// }
