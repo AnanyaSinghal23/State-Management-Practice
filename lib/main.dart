@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:state_management_practice/examples/example1.dart';
+import 'package:state_management_practice/examples/example2.dart';
 
 void main() {
   runApp(
@@ -9,41 +11,12 @@ void main() {
   );
 }
 
-//------------ EXAMPLE 2 ------------
-
-extension OptionalInfixAddition<T extends num> on T? {
-  T? operator +(T? other) {
-    final shadow = this;
-    if (shadow != null) {
-      return shadow + (other ?? 0) as T;
-    } else {
-      return null;
-    }
-  }
-}
-
-class Counter extends StateNotifier<int?> {
-  Counter() : super(0);
-  void increment() => state = state == 0 ? 1 : state + 1;
-  int? get value => state;
-}
-
-final counterProvider = StateNotifierProvider<Counter, int?>(
-  (ref) => Counter(),
-);
-
-//------------ EXAMPLE 1 ------------
-//package: hooks_riverpod
-
 class App extends StatelessWidget {
-  const App({super.key});
+  const App({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      // theme: ThemeData(
-      //   primaryColor: Colors.blue,
-      // ),
       darkTheme: ThemeData.dark(),
       themeMode: ThemeMode.dark,
       debugShowCheckedModeBanner: false,
@@ -52,69 +25,47 @@ class App extends StatelessWidget {
   }
 }
 
-final currentDate = Provider(
-  (ref) => DateTime.now(),
-);
-
-class HomePage extends ConsumerWidget {
-  const HomePage({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final date = ref.watch(currentDate);
-    // //as the value changes, the whole scaffold builds again -- computational power waste
-    // final counter = ref.watch(counterProvider);
-    return Scaffold(
-      appBar: AppBar(
-        title: Consumer(
-          builder: (context, ref, child) {
-            //only title will be recalc
-            final count = ref.watch(counterProvider);
-            final text = count == 0 ? 'Press the button' : count.toString();
-            return Text(text);
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Ex1()),
+            );
           },
+          child: const Text('Example 1'),
         ),
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          TextButton(
-            // onPressed: ref.read(counterProvider.notifier).increment,
-            onPressed: () {
-              //gets current snapshot of the data
-              ref.read(counterProvider.notifier).increment();
-            },
-            child: const Text(
-              'Increment Counter',
-            ),
-          ),
-          SizedBox(height: 20),
-          Center(
-            child: Text('Date And Time:- '),
-          ),
-          SizedBox(height: 10),
-          Center(
-              child: Text(
-            date.toString(),
-            style: TextStyle(
-              color: Colors.white,
-            ),
-          )),
-        ],
-      ),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Ex2()),
+            );
+          },
+          child: const Text('Example 2'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Ex2()),
+            );
+          },
+          child: const Text('Example 3'),
+        ),
+      ],
     );
   }
 }
-
-//**error** Bad state: provider to be available to ur app.. under runapp
-
-// class HomePage extends StatelessWidget {
-//   const HomePage({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(title: const Text('Home'),),
-//     );
-//   }
-// }
