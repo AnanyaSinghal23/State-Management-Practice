@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:state_management_practice/examples/example1.dart';
 import 'package:state_management_practice/examples/example2.dart';
+import 'package:state_management_practice/examples/example3.dart';
+import 'package:state_management_practice/examples/example4.dart';
+import 'package:state_management_practice/examples/example5.dart';
 
 void main() {
   runApp(
@@ -60,10 +63,28 @@ class _HomePageState extends State<HomePage> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const Ex2()),
+              MaterialPageRoute(builder: (context) => const Ex3()),
             );
           },
           child: const Text('Example 3'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Ex4()),
+            );
+          },
+          child: const Text('Example 4'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Ex5()),
+            );
+          },
+          child: const Text('Example 5'),
         ),
       ],
     );
